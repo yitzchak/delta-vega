@@ -11,21 +11,48 @@
                   (+ pos (- (random (/ range 2)) (/ range 4))))))
 
 
-#|(defstruct parametric-interval
+(defstruct parametric-interval
   min
   max
-  s
-  x
-  y
+  x-min
+  x-max
+  y-min
+  y-max
+  remaining
   (left :closed)
-  (right :closed))|#
+  (right :closed))
+
+
+(defun random-intervals (x y min max count remaining)
+  (do* ((range (/ (- max min) (1- count)))
+        (i 1 (1+ i))
+        (epsilon (/ range 4))
+        (offset (* range 7/8))
+        (right (+ min offset) (+ right range))
+        (int (make-parametric-interval :min min
+                                       :max (+ right (random epsilon))
+                                       :x-min (funcall x min)
+                                       :y-min (funcall y min)
+                                       :remaining remaining)
+             (make-parametric-interval :min (parametric-interval-max int)
+                                       :max (if (= i (1- count))
+                                              max
+                                              (+ right (random epsilon)))
+                                       :x-min (parametric-interval-x-max int)
+                                       :y-min (parametric-interval-y-max int)
+                                       :remaining remaining))
+        results)
+      ((= i count) (nreverse results))
+    (setf (parametric-interval-x-max int) (funcall x (parametric-interval-max int))
+          (parametric-interval-y-max int) (funcall y (parametric-interval-max int)))
+    (push int results)))
 
 
 (defun split-p (x-min x-center x-max y-min y-center y-max)
   "This function calculates the curvature of a quadratic polynomial fit to the three points and
-   multiplies that by the half distance between the endpoints. Since curvature has units of 1/length the
-   result is dimension-less quantity. On a circle in which the endpoints are separated by a small
-   angle like a tenth of radian this results in a value of about 0.025"
+   multiplies that by the half distance between the endpoints. Since curvature has units of 1/length
+   the result is dimension-less quantity. On a circle in which the endpoints are separated by a
+   small angle like a tenth of radian this results in a value of about 0.025"
   (< 0.025 (abs (/ (- (* (- x-max x-min) (- (+ y-min y-max) (* 2 y-center)))
                       (* (- y-max y-min) (- (+ x-min x-max) (* 2 x-center))))
                    (+ (expt (- x-max x-min) 2) (expt (- y-max y-min) 2))))))
@@ -42,6 +69,20 @@
         (append (split x y min center x-min x-center y-min y-center (1- remaining))
                 (split x y center max x-center x-max y-center y-max (1- remaining)))
         (list (list min x-min y-min))))))
+
+
+(defun analyze-parametric (x y min max samples max-split)
+  (do ((intervals (random-intervals x y min max samples max-split))
+       results)
+      ((null intervals) (nreverse results))
+    (cond
+      ((split-p (parametric-interval-x-min (car intervals))
+                x-center
+                (parametric-interval-x-max (car intervals))
+                (parametric-interval-y-min (car intervals))
+                y-center
+                (parametric-interval-y-max (car intervals)))
+
 
 
 (defun analyze-parametric (x y min max samples max-split)
