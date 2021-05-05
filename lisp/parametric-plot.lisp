@@ -66,28 +66,43 @@
       (values t :closed :closed))))
 
 
+(defun random-split (x y min max)
+  (let ((s (+ (* .9 min)
+              (* .1 max)
+              (random (* .9 (- max min))))))
+    (values s (funcall x s) (funcall y s) :closed :closed)))
+
+
+(defun find-split (x y min max x-min x-max y-min y-max)
+  (if (< 1000.0 (/ (- y-max y-min) (- x-max x-min)))
+    (random-split x y min max)
+    (dotimes (i 10 nil)
+      (multiple-value-bind (center x-center y-center)
+                           (random-split x y min max)
+        (when (< 0.01 (abs (/ (- (* (- x-max x-min) (- (+ y-min y-max) (* 2 y-center)))
+                                 (* (- y-max y-min) (- (+ x-min x-max) (* 2 x-center))))
+                              (+ (expt (- x-max x-min) 2) (expt (- y-max y-min) 2)))))
+          (return (values center x-center y-center :continuous :continuous)))))))
+
+
 (defun analyze-parametric (x y min max samples max-split)
   (prog ((intervals (random-intervals x y min max samples max-split))
-         results int center x-center y-center split left right)
+         results int center x-center y-center left right)
    repeat
     (when (null intervals)
       (return (nreverse results)))
-    (setf int (pop intervals)
-          center (+ (random (/ (- (parametric-interval-max int) (parametric-interval-min int)) 4))
-                    (* 0.625 (parametric-interval-min int))
-                    (* 0.375 (parametric-interval-max int)))
-          x-center (funcall x center)
-          y-center (funcall y center))
-    (multiple-value-setq (split left right)
-                         (split-p (parametric-interval-x-min int)
-                                  x-center
-                                  (parametric-interval-x-max int)
-                                  (parametric-interval-y-min int)
-                                  y-center
-                                  (parametric-interval-y-max int)))
+    (setf int (pop intervals))
+    (multiple-value-setq (center x-center y-center left right)
+                         (find-split x y
+                                   (parametric-interval-min int)
+                                   (parametric-interval-max int)
+                                   (parametric-interval-x-min int)
+                                   (parametric-interval-x-max int)
+                                   (parametric-interval-y-min int)
+                                   (parametric-interval-y-max int)))
     (cond
       ((and (not (zerop (parametric-interval-remaining int)))
-                 split)
+                 center)
         (push (make-parametric-interval :min center
                                         :max (parametric-interval-max int)
                                         :x-min x-center
