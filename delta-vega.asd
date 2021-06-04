@@ -3,14 +3,15 @@
   :author "Tarn W. Burton"
   :license "MIT"
   :depends-on
-    (:common-lisp-jupyter)
+    (:common-lisp-jupyter :trivial-do)
   :components
     ((:module lisp
       :serial t
       :components
         ((:file "packages")
          (:file "parametric-plot")
-         (:file "scatter-plot"))))
+         (:file "scatter-plot")
+         (:file "bar-plot"))))
   . #+asdf3
       (:version "0.1"
        :homepage "https://yitzchak.github.io/delta-vega/"
