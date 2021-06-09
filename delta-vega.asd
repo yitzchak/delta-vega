@@ -9,6 +9,10 @@
       :serial t
       :components
         ((:file "packages")
+         (:file "object")
+         (:file "channel")
+         (:file "view")
+         (:file "transform")
          (:file "parametric-plot")
          (:file "scatter-plot")
          (:file "bar-plot"))))

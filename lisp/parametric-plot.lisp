@@ -61,9 +61,9 @@
     ((< 0.01 (abs (/ (- (* (- x-max x-min) (- (+ y-min y-max) (* 2 y-center)))
                         (* (- y-max y-min) (- (+ x-min x-max) (* 2 x-center))))
                      (+ (expt (- x-max x-min) 2) (expt (- y-max y-min) 2)))))
-      (values t :continuous :continuous))
+      (cl:values t :continuous :continuous))
     ((< 1000.0 (/ (- y-max y-min) (- x-max x-min)))
-      (values t :closed :closed))))
+      (cl:values t :closed :closed))))
 
 
 (defun analyze-parametric (x y min max samples max-split)
@@ -140,24 +140,18 @@
     (go repeat)))
 
 
-(defun parametric-plot (x y &key title id update x-title y-title min max (samples 20) (max-split 4) point)
+(defun parametric-plot (x y &rest initarg &key title (width 400) (height 400) id update x-title y-title min max (samples 20) (max-split 4) point)
   (let ((values (create-values (analyze-parametric x y min max samples max-split))))
-    (jupyter:vega-lite `(:object-plist "$schema" "https://vega.github.io/schema/vega-lite/v5.json"
-                                         ,@(when title
-                                             (list "title" title))
-                                         "data" (:object-plist "values" ,values)
-                                         "width" 400
-                                         "height" 400
-                                         "layer" ((:object-plist "mark" ,(if point "point" "line")
-                                                                 "encoding" (:object-plist "order" (:object-plist "field" "i")
-                                                                                           "x" (:object-plist "field" "x"
-                                                                                                              "type" "quantitative"
-                                                                                                              ,@(when x-title
-                                                                                                                  (list "axis" (list :object-plist "title" x-title))))
-                                                                                           "y" (:object-plist "field" "y"
-                                                                                                              "type" "quantitative"
-                                                                                                              ,@(when x-title
-                                                                                                                  (list "axis" (list :object-plist "title" y-title))))))))
-                         :display t
-                         :id id
-                         :update update)))
+    (jupyter:vega-lite
+      (make-view :$schema t :data (make-data :values values) :mark (if point :point :line)
+                 :encoding (make-encoding :order (make-field-definition :field "i")
+                                          :x (make-field-definition :field "x" :type :quantitative
+                                                                    :title x-title)
+                                          :y (make-field-definition :field "y" :type :quantitative
+                                                                    :title y-title))
+                 :title title
+                 :width width
+                 :height height)
+      :display t
+      :id id
+      :update update)))
