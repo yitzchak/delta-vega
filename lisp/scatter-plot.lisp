@@ -3,8 +3,7 @@
 
 (defun scatter-plot (x y &rest parameters &key description title width height id update x-title y-title regression)
   (jupyter:vega-lite
-    (make-view :$schema t
-               :data (make-data :values (map 'vector
+    (make-top-view :data (make-data :values (map 'vector
                                           (lambda (x y)
                                             (list :object-plist
                                                   "x" x

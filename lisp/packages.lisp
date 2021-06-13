@@ -11,5 +11,6 @@
     #:make-data
     #:make-regression
     #:make-encoding
+    #:make-top-view
     #:scatter-plot
     #:bar-plot))

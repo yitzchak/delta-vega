@@ -27,7 +27,6 @@
     (call-next-method)))
 
 
-
 (defclass data (vega-object)
   ((values
      :accessor values
@@ -47,3 +46,32 @@
   (apply #'make-instance 'data initarg))
 
 
+(defclass vector-data ()
+  ((names
+     :accessor names
+     :initarg :names
+     :type (or list vector))
+   (values
+     :accessor values
+     :initarg :values
+     :type (or list vector))))
+
+
+(defun make-vector-data (x y)
+  (make-instance 'vector-data :values (list x y) :names (list "x" "y")))
+
+
+(defmethod shasht:print-json-value ((instance vector-data) output-stream)
+  (with-slots (names values) instance
+    (shasht:with-json-object output-stream
+      (shasht:with-json-key ("values" output-stream)
+        (shasht:print-json-delimiter output-stream)
+        (shasht:with-json-array output-stream
+          (when values
+            (dotimes (index (length (elt values 0)))
+              (shasht:print-json-delimiter output-stream)
+              (shasht:with-json-object output-stream
+                (map nil (lambda (name value)
+                           (shasht:print-json-key-value nil name (elt value index) output-stream))
+                         names
+                         values)))))))))

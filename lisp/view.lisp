@@ -83,6 +83,17 @@
 
 
 (defun make-view (&rest initargs &key &allow-other-keys)
-  (when (eq t (getf initargs :$schema))
-    (setf (getf initargs :$schema) +vega-lite-schema+))
   (apply #'make-instance 'view initargs))
+
+
+(defclass top-view (view)
+  (($schema
+     :accessor $schema
+     :initarg :$schema
+     :initform +vega-lite-schema+)))
+
+
+(defun make-top-view (&rest initargs &key &allow-other-keys)
+  (apply #'make-instance 'top-view initargs))
+
+

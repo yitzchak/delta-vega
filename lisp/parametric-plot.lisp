@@ -143,7 +143,7 @@
 (defun parametric-plot (x y &rest initarg &key title (width 400) (height 400) id update x-title y-title min max (samples 20) (max-split 4) point)
   (let ((values (create-values (analyze-parametric x y min max samples max-split))))
     (jupyter:vega-lite
-      (make-view :$schema t :data (make-data :values values) :mark (if point :point :line)
+      (make-top-view :data (make-data :values values) :mark (if point :point :line)
                  :encoding (make-encoding :order (make-field-definition :field "i")
                                           :x (make-field-definition :field "x" :type :quantitative
                                                                     :title x-title)
