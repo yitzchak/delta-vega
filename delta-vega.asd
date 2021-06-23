@@ -11,6 +11,7 @@
         ((:file "packages")
          (:file "object")
          (:file "channel")
+         (:file "mark")
          (:file "view")
          (:file "transform")
          (:file "parametric-plot")

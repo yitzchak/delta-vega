@@ -1,10 +1,11 @@
 (in-package :delta-vega)
 
 
-(defun bar-plot (x y &key title id update x-title y-title width height)
+(defun make-plot (&key data
+&key title id update x-title y-title width height)
   (jupyter:vega-lite
     (make-top-view :data (make-vector-data "x" x "y" y)
-                   :mark (make-bar-mark)
+                   :mark :bar
                    :encoding (make-encoding :x (make-field-definition :field "x" :type :ordinal
                                                                       :title x-title)
                                             :y (make-field-definition :field "y" :type :quantitative
@@ -15,3 +16,4 @@
     :display t
     :id id
     :update update))
+

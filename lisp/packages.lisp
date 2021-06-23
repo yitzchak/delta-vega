@@ -5,12 +5,19 @@
   (:shadow "FORMAT" "METHOD" "TYPE" "VALUES")
   (:documentation "Wrapper functions for VegaLite in common-lisp-jupyter")
   (:export
-    #:parametric-plot
-    #:make-view
-    #:make-field-definition
+    #:bar-plot
+    #:make-arc-mark
+    #:make-bar-mark
     #:make-data
-    #:make-regression
     #:make-encoding
+    #:make-field-definition
+    #:make-point-mark
+    #:make-regression
+    #:make-text-mark
+    #:make-tick-mark
     #:make-top-view
-    #:scatter-plot
-    #:bar-plot))
+    #:make-vector-data
+    #:make-view
+    #:parametric-plot
+    #:scatter-plot))
+

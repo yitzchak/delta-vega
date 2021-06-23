@@ -5,10 +5,7 @@
 
 
 (defclass view (vega-object)
-  (($schema
-     :accessor $schema
-     :initarg :$schema)
-   (align
+  ((align
      :accessor align
      :initarg :align)
    (autosize

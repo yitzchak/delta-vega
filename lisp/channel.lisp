@@ -13,6 +13,18 @@
      :accessor type
      :initarg :type
      :type (member :ordinal :quantitative :nominal :temporal))
+   (legend
+     :accessor legend
+     :initarg :legend
+     :type null)
+   (scale
+     :accessor scale
+     :initarg :scale
+     :type t)
+   (stack
+     :accessor stack
+     :initarg :stack
+     :type boolean)
    (title
      :accessor title
      :initarg :title
@@ -36,6 +48,22 @@
    (y
      :accessor y
      :initarg :y
+     :type channel-definition)
+   (text
+     :accessor text
+     :initarg :text
+     :type channel-definition)
+   (color
+     :accessor color
+     :initarg :color
+     :type channel-definition)
+   (shape
+     :accessor shape
+     :initarg :shape
+     :type channel-definition)
+   (theta
+     :accessor theta
+     :initarg :theta
      :type channel-definition)))
 
 

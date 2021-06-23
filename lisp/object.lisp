@@ -57,8 +57,12 @@
      :type (or list vector))))
 
 
-(defun make-vector-data (x y)
-  (make-instance 'vector-data :values (list x y) :names (list "x" "y")))
+(defun make-vector-data (&rest plist)
+  (let (names values)
+    (trivial-do:doplist (name value plist
+                         (make-instance 'vector-data :values values :names names))
+      (push name names)
+      (push value values))))
 
 
 (defmethod shasht:print-json-value ((instance vector-data) output-stream)
@@ -75,3 +79,14 @@
                            (shasht:print-json-key-value nil name (elt value index) output-stream))
                          names
                          values)))))))))
+
+
+(defclass expr-ref (vega-object)
+  ((expr
+     :accessor expr
+     :initarg :expr
+     :type string)))
+
+
+(deftype number-or-expr-ref ()
+  `(or number expr-ref))
